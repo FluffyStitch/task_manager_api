@@ -64,7 +64,7 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/task_manager-api
-      - run: bundle exec rake db:create db:schema:load --trace
+      - run: bundle exec rails db:schema:load --trace
       - run: bundle exec rspec
 
 workflows:
