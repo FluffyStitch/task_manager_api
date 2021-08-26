@@ -1,86 +1,50 @@
 version: 2.1
 
-executors:
-  default:
-    description: The official CircleCI Ruby Docker image
-    docker:
-      - image: circleci/ruby:2.7.2
-    environment:
-      - BUNDLE_JOBS: 4
-      - BUNDLE_RETRY: 3
-      - BUNDLE_PATH: vendor/bundle
-    working_directory: ~/task_manager-api
-  deploy_image:
-    working_directory: ~/task_manager-api
-    docker:
-      - image: circleci/ruby:2.7.2
+orbs:
+  ruby: circleci/ruby@1.0
+  node: circleci/node@2
+  browser-tools: circleci/browser-tools@1.0.1
 
 jobs:
-  checkout:
-    executor: default
+  lintering:
+    docker:
+      - image: cimg/ruby:2.7.2
     steps:
       - checkout
-      - persist_to_workspace:
-          root: ~/task_manager-api
-          paths:
-            - .
+      - ruby/install-deps
+      - run:
+          name: lefthook
+          command: bundle exec lefthook run pre-commit
 
-  bundle:
-    executor: default
-    steps:
-      - attach_workspace:
-          at: ~/task_manager-api
-      - restore_cache:
-          keys:
-            - task_manager-api-{{ checksum "Gemfile.lock" }}
-            - task_manager-api-
-      - run: gem i bundler -v $(tail -1 Gemfile.lock | tr -d ' ')
-      - run: sudo apt-get install cmake
-      - run: |
-          bundle config set path 'vendor/bundle'
-          bundle install && bundle clean
-      - save_cache:
-          key: task_manager-api-{{ checksum "Gemfile.lock" }}
-          paths:
-            - vendor/bundle
-      - persist_to_workspace:
-          root: ~/task_manager-api
-          paths:
-            - vendor/bundle
-
-  lefthook:
-    executor: default
-    steps:
-      - attach_workspace:
-          at: ~/task_manager-api
-      - run: |
-          bundle exec lefthook run linters
-  rspec:
-    executor: default
+  testing:
     docker:
-      - image: circleci/postgres:11-alpine-ram
+      - image: cimg/ruby:2.7.2
+      - image: circleci/postgres:12.8
         environment:
-          - POSTGRES_USER: postgres
+          POSTGRES_USER: postgres
+    environment:
+      RAILS_ENV: test
     steps:
-      - attach_workspace:
-          at: ~/task_manager-api
+      - checkout
+      - ruby/install-deps
+      - run:
+          name: Install ImageMagick
+          command: sudo apt-get update && sudo apt-get install imagemagick
       - run:
           name: Wait for DB
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
-      - run: bundle exec rails db:schema:load --trace
-      - run: bundle exec rspec
+      - run:
+          name: Database setup
+          command: bundle exec rails db:schema:load --trace
+      - run:
+          name: run specs
+          command: bundle exec rspec
 
 workflows:
   version: 2
-  default: &default
+  lint_and_test:
     jobs:
-      - checkout
-      - bundle:
+      - lintering
+      - testing:
           requires:
-            - checkout
-      - rspec:
-          requires:
-            - bundle
-      - lefthook:
-          requires:
-            - bundle
+            - lintering
