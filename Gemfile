@@ -21,6 +21,7 @@ gem 'reform', '~> 2.2.0', '>= 2.2.4'
 gem 'reform-rails', '~> 0.1.7'
 gem 'shrine', '~> 3.4.0'
 gem 'simple_endpoint', '~> 1.0.0'
+gem 'spring', '~> 2.1.1'
 gem 'trailblazer-rails', '~> 2.1.7'
 
 group :development, :test do
@@ -37,7 +38,6 @@ group :development do
   gem 'rubocop-performance', '~> 1.11.5'
   gem 'rubocop-rails', '~> 2.11.3'
   gem 'rubocop-rspec', '~> 2.4.0'
-  gem 'spring', '~> 2.1.1'
 end
 
 group :test do
