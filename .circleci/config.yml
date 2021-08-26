@@ -64,6 +64,9 @@ jobs:
     steps:
       - attach_workspace:
           at: ~/task_manager-api
+      - run:
+          name: Wait for DB
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
       - run: bundle exec rails db:schema:load --trace
       - run: bundle exec rspec
 
