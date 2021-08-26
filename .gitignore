@@ -30,3 +30,6 @@
 
 /public/uploads
 /coverage
+/spec/api_doc
+/storage
+/vendor

@@ -1,0 +1,83 @@
+version: 2.1
+
+executors:
+  default:
+    description: The official CircleCI Ruby Docker image
+    docker:
+      - image: circleci/ruby:2.7.2
+    environment:
+      - BUNDLE_JOBS: 4
+      - BUNDLE_RETRY: 3
+      - BUNDLE_PATH: vendor/bundle
+    working_directory: ~/task_manager-api
+  deploy_image:
+    working_directory: ~/task_manager-api
+    docker:
+      - image: circleci/ruby:2.7.2
+
+jobs:
+  checkout:
+    executor: default
+    steps:
+      - checkout
+      - persist_to_workspace:
+          root: ~/task_manager-api
+          paths:
+            - .
+
+  bundle:
+    executor: default
+    steps:
+      - attach_workspace:
+          at: ~/task_manager-api
+      - restore_cache:
+          keys:
+            - task_manager-api-{{ checksum "Gemfile.lock" }}
+            - task_manager-api-
+      - run: gem i bundler -v $(tail -1 Gemfile.lock | tr -d ' ')
+      - run: sudo apt-get install cmake
+      - run: |
+          bundle config set path 'vendor/bundle'
+          bundle install && bundle clean
+      - save_cache:
+          key: task_manager-api-{{ checksum "Gemfile.lock" }}
+          paths:
+            - vendor/bundle
+      - persist_to_workspace:
+          root: ~/task_manager-api
+          paths:
+            - vendor/bundle
+
+  lefthook:
+    executor: default
+    steps:
+      - attach_workspace:
+          at: ~/task_manager-api
+      - run: |
+          bundle exec lefthook run linters
+  rspec:
+    executor: default
+    docker:
+      - image: circleci/postgres:11-alpine-ram
+        environment:
+          - POSTGRES_USER: postgres
+    steps:
+      - attach_workspace:
+          at: ~/task_manager-api
+      - run: bundle exec rake db:create db:schema:load --trace
+      - run: bundle exec rspec
+
+workflows:
+  version: 2
+  default: &default
+    jobs:
+      - checkout
+      - bundle:
+          requires:
+            - checkout
+      - rspec:
+          requires:
+            - bundle
+      - lefthook:
+          requires:
+            - bundle

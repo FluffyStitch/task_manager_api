@@ -1,0 +1,13 @@
+pre-commit:
+  parallel: true
+  commands:
+    linters:
+      run: |
+        bundle exec lefthook run linters
+
+linters:
+  parallel: true
+  commands:
+    rubocop:
+      run: |
+        bundle exec rubocop --parallel

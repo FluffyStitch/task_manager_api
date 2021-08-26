@@ -1,0 +1,48 @@
+require:
+  - rubocop-performance
+  - rubocop-rspec
+  - rubocop-rails
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 2.7.2
+  SuggestExtensions: false
+  Exclude:
+    - node_modules/**/*
+    - bin/*
+    - config/**/*
+    - vendor/**/*
+    - db/**/*
+
+Layout/LineLength:
+  Max: 120
+
+Style/Documentation:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - 'Gemfile'
+    - 'spec/**/*.rb'
+
+RSpec/MultipleMemoizedHelpers:
+  Max: 7
+
+Style/ClassAndModuleChildren:
+  Enabled: false
+
+Lint/UnreachableCode:
+  Exclude:
+    - 'app/concepts/**/operation/*.rb'
+
+Style/SignalException:
+  Exclude:
+    - 'app/concepts/**/operation/*.rb'
+
+Naming/MethodName:
+  Exclude:
+    - 'lib/macro/**/*.rb'
+
+Metrics/ModuleLength:
+  Exclude:
+    - 'spec/docs/**/*.rb'
