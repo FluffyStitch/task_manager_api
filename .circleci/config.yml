@@ -21,14 +21,12 @@ jobs:
         environment:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: task_manager_api_test
     environment:
       RAILS_ENV: test
     steps:
       - checkout
       - ruby/install-deps
-      - run:
-          name: Install ImageMagick
-          command: sudo apt-get update && sudo apt-get install imagemagick
       - run:
           name: Wait for DB
           command: dockerize -wait tcp://localhost:5432 -timeout 1m
