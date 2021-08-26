@@ -32,3 +32,7 @@
 /coverage
 /spec/api_doc
 /storage
+
+/config/credentials/test.key
+
+/config/credentials/development.key
