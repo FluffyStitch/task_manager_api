@@ -3,14 +3,14 @@
 module Api::V1
   module User::Project::Task::Operation
     class Complete < Api::V1::ApplicationOperation
-      step Macro::Set(key: :model, value: ->(ctx) { ctx[:current_user].tasks.find_by(id: ctx[:params][:task_id]) })
-      fail Macro::Set(key: :status, value: :not_found)
+      step Macro::FindBy(path: %i[current_user tasks], param_path: %i[params task_id])
+      fail Macro::Semantic(failure: :not_found)
       step :complete
-      step Macro::Set(key: :status, value: :created)
+      step Macro::Semantic(success: :created)
       step Macro::Serialize(serializer: Api::V1::TaskSerializer)
 
       def complete(_ctx, model:, **)
-        model.update(completed: !model.completed)
+        model.update(completed: true)
       end
     end
   end

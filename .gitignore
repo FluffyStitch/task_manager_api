@@ -24,15 +24,8 @@
 .byebug_history
 
 # Ignore master key for decrypting credentials and more.
-/config/master.key
-
-/config/credentials/production.key
-
+/config/**/*.key
 /public/uploads
 /coverage
 /spec/api_doc
 /storage
-
-/config/credentials/test.key
-
-/config/credentials/development.key

@@ -8,17 +8,15 @@ module Api::V1
 
       validation do
         configure do
-          config.messages_file = 'config/locales/errors.yml'
-
           option :form
 
           def in_future?(deadline)
-            Time.zone.parse(deadline).present?
+            deadline >= Time.zone.today
           end
         end
 
         required(:text).filled(:str?)
-        required(:deadline) { empty? | in_future? }
+        required(:deadline).maybe(:date?, :in_future?)
       end
     end
   end

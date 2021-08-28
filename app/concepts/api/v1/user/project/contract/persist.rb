@@ -7,16 +7,14 @@ module Api::V1
 
       validation do
         configure do
-          config.messages_file = 'config/locales/errors.yml'
-
           option :form
 
           def unique?(name)
-            form.model.user.projects.where.not(id: form.model.id).where(name: name).empty?
+            !form.model.user.projects.exists?(name: name)
           end
         end
 
-        required(:name).filled(:unique?)
+        required(:name).filled(:str?, :unique?)
       end
     end
   end

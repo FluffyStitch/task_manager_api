@@ -9,7 +9,7 @@ module Api::V1
       collection :images, form: Api::V1::Lib::Contract::Image, populate_if_empty: ::Image
 
       validation do
-        required(:text).filled(size?: LENGTH)
+        required(:text).filled(:str?, size?: LENGTH)
         required(:images).maybe(:array?)
       end
     end

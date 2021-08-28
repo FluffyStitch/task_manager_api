@@ -7,7 +7,7 @@ module Api::V1
       step Contract::Build(constant: Api::V1::User::Registration::Contract::Create)
       step Contract::Validate()
       step Contract::Persist()
-      step Macro::Set(key: :status, value: :created)
+      step Macro::Semantic(success: :created)
       step Subprocess(Api::V1::Lib::Operation::GenerateTokens)
       step Macro::Serialize(serializer: Api::V1::UserSerializer, meta: :session_data)
     end

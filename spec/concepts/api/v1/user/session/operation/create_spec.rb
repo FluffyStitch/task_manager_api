@@ -1,14 +1,13 @@
 # frozen_string_literal: true
 
-RSpec.describe Api::V1::User::Project::Operation::Show do
+RSpec.describe Api::V1::User::Session::Operation::Create do
   describe '.call' do
-    subject(:result) { described_class.call(current_user: user, params: params) }
+    subject(:result) { described_class.call(params: params) }
 
     let(:user) { create(:user) }
-    let!(:project) { create(:project, user: user) }
 
     context 'when params are valid' do
-      let(:params) { { id: project.id } }
+      let(:params) { { email: user.email, password: user.password } }
 
       it { is_expected.to be_success }
     end
@@ -17,7 +16,7 @@ RSpec.describe Api::V1::User::Project::Operation::Show do
       let(:params) { {} }
 
       it { is_expected.to be_failure }
-      it { expect(result[:status]).to eq :not_found }
+      it { expect(result[:semantic_failure]).to eq :unauthorized }
     end
   end
 end

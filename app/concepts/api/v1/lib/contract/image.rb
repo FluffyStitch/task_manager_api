@@ -7,8 +7,6 @@ module Api::V1
 
       validation do
         configure do
-          config.messages_file = 'config/locales/errors.yml'
-
           option :form
 
           def valid_img?(image)

@@ -5,7 +5,7 @@ module Api::V1
     class Create < Api::V1::ApplicationOperation
       step Model(::User, :find_by, :email)
       step :authenticate
-      fail Macro::Set(key: :status, value: :unauthorized)
+      fail Macro::Semantic(failure: :unauthorized)
       step Subprocess(Api::V1::Lib::Operation::GenerateTokens)
       step Macro::Serialize(serializer: Api::V1::UserSerializer, meta: :session_data)
 

@@ -1,8 +1,8 @@
 en:
   errors:
-    unique?: Name must be unique
-    in_future?: Deadline must be in future
-    valid_img?: Image must be .png or .jpg with size less 10 mb
+    unique?: must be unique
+    in_future?: must be in future
+    valid_img?: must be .png or .jpg with size less 10 mb
     filtering_column_valid?: invalid filtering column
     filtering_predicate_valid?: invalid filtering predicate
     filtering_value_valid?: invalid filtering value

@@ -31,7 +31,7 @@ RSpec.describe Api::V1::User::Project::Task::Operation::Position do
       let(:params) { { id: tasks.last.id + 1 } }
 
       it { is_expected.to be_failure }
-      it { expect(result[:status]).to eq :not_found }
+      it { expect(result[:semantic_failure]).to eq :not_found }
     end
   end
 end

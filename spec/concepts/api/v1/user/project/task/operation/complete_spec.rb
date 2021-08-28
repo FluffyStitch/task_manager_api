@@ -17,7 +17,7 @@ RSpec.describe Api::V1::User::Project::Task::Operation::Complete do
       let(:params) { { id: task.id + 1 } }
 
       it { is_expected.to be_failure }
-      it { expect(result[:status]).to eq :not_found }
+      it { expect(result[:semantic_failure]).to eq :not_found }
     end
   end
 end
