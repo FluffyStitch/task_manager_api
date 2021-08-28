@@ -6,8 +6,8 @@ module Api::V1
       step Macro::FindBy(path: %i[current_user projects], param_path: %i[params project_id], model: :project)
       fail Macro::Semantic(failure: :not_found)
       step Macro::Assign(to: :model, path: %i[project tasks])
-      step Macro::Set(
-        key: :available_columns,
+      step Macro::Assign(
+        to: :available_columns,
         value: Api::V1::Lib::Service::JsonApi::ColumnsBuilder.call(
           { name: 'deadline', type: :date, filterable: true },
           { name: 'completed', type: :boolean, filterable: true }
