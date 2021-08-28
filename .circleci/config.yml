@@ -1,0 +1,47 @@
+version: 2.1
+
+orbs:
+  ruby: circleci/ruby@1.0
+
+jobs:
+  lintering:
+    docker:
+      - image: cimg/ruby:2.7.2
+    steps:
+      - checkout
+      - ruby/install-deps
+      - run:
+          name: lefthook
+          command: bundle exec lefthook run pre-commit
+
+  testing:
+    docker:
+      - image: cimg/ruby:2.7.2
+      - image: circleci/postgres:12.8
+        environment:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: task_manager_api_test
+    environment:
+      RAILS_ENV: test
+    steps:
+      - checkout
+      - ruby/install-deps
+      - run:
+          name: Wait for DB
+          command: dockerize -wait tcp://localhost:5432 -timeout 1m
+      - run:
+          name: Database setup
+          command: bundle exec rails db:schema:load --trace
+      - run:
+          name: run specs
+          command: bundle exec rspec
+
+workflows:
+  version: 2
+  lint_and_test:
+    jobs:
+      - lintering
+      - testing:
+          requires:
+            - lintering
